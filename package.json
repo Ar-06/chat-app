@@ -1,0 +1,29 @@
+{
+  "name": "chat-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch ./server/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ar-06/chat-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ar-06/chat-app/issues"
+  },
+  "homepage": "https://github.com/Ar-06/chat-app#readme",
+  "dependencies": {
+    "@libsql/client": "^0.6.2",
+    "dotenv": "^16.4.5",
+    "express": "4.19.2",
+    "morgan": "1.10.0",
+    "socket.io": "4.7.5"
+  }
+}
