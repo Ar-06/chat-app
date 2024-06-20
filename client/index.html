@@ -13,16 +13,10 @@
         const getUsername = async () => {
 
             const username = sessionStorage.getItem('username');
-            if (username){
-                console.log(`User existed: ${username}`);
-                return username;
+            if (!username){
+                window.location.href = 'login.html'
             }
-
-            const res = await fetch('https://random-data-api.com/api/users/random_user')
-            const { username: randomUsername } = await res.json()
-
-            sessionStorage.setItem('username', randomUsername)
-            return randomUsername
+            return username
         }
         
         const socket = io({
@@ -166,5 +160,5 @@
             <button type="submit">Enviar</button>
         </form>
     </section>
-</body>
+</body> 
 </html>

@@ -4,6 +4,7 @@ import { Server } from 'socket.io'; //manejar el servidos de websockets
 import {createServer} from 'node:http'; //módulo para crear servidores http
 import dotenv from 'dotenv'
 import { createClient } from '@libsql/client';
+import bodyParser from 'body-parser';
 
 dotenv.config()
 
@@ -22,12 +23,49 @@ const db = createClient({
 })
 
 await db.execute(`
+    CREATE TABLE IF NOT EXISTS users(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username text,
+        password text
+    )
+`)
+
+
+await db.execute(`
     CREATE TABLE IF NOT EXISTS messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     content TEXT,
     user TEXT
     )
 `)
+
+app.use(logger('dev')) //Ver el status de nuestro login
+app.use(bodyParser.json()); // parse aplication/json
+
+
+app.post('/login', async(req,res)=>{
+    const {username,password} = req.body
+    //Validar las credenciales con la base de datos
+    const result = await db.execute({
+        sql: 'SELECT * FROM users WHERE username = :username AND password = :password',
+        args: {username,password}
+    })
+
+    if (result.rows.length > 0){
+        res.json({succes: true})
+    } else {
+        res.json({succes: false})
+    }
+})
+
+app.get('/', (req,res) => {
+    res.sendFile(process.cwd() + '/client/index.html') //servimos el html
+});
+
+app.get('/login', (req,res) =>{
+    res.sendFile(process.cwd() + '/client/login.html') //servimos el login
+})
+
 
 
 io.on('connection', async(socket) => {
@@ -71,16 +109,6 @@ io.on('connection', async(socket) => {
         }
     }
 });
-
-
-
-
-app.use(logger('dev')) //Ver el status de nuestro login
-
-app.get('/', (req,res) => {
-    res.sendFile(process.cwd() + '/client/index.html') //servimos el html
-});
-
 
 server.listen(port,() => {
     console.log(`Servidor corriendo en puerto ${port}`);
